@@ -1,19 +1,22 @@
-package com.jay.nixsolutioinstest.view.mainscreen;
+package com.jay.nixsolutionstest.view.mainscreen;
 
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.jay.nixsolutioinstest.R;
+import com.jay.nixsolutionstest.R;
 
 import butterknife.BindColor;
+import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -27,9 +30,16 @@ public class CompletedPurchasesFragment extends Fragment {
 
     private Unbinder unbinder;
 
-    //this view location in MainActivity
+    //MainActivity's view
     @BindView(R.id.completed_purchases)
     LinearLayout completedPurchasesTab;
+
+    //MainActivity's view
+    @BindView(R.id.main_fab)
+    FloatingActionButton deleteBtn;
+
+    @BindDrawable(R.drawable.ic_action_delete)
+    Drawable iconDelete;
 
     @BindColor(R.color.colorAccent)
     int colorAccent;
@@ -64,6 +74,7 @@ public class CompletedPurchasesFragment extends Fragment {
         unbinder = ButterKnife.bind(this,activity);
 
         completedPurchasesTab.setBackgroundColor(colorAccent);
+        deleteBtn.setImageDrawable(iconDelete);
     }
 
 

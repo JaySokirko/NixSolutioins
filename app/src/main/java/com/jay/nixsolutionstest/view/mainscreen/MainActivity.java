@@ -1,4 +1,4 @@
-package com.jay.nixsolutioinstest.view.mainscreen;
+package com.jay.nixsolutionstest.view.mainscreen;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -7,9 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.jay.nixsolutioinstest.R;
-
-import java.util.PriorityQueue;
+import com.jay.nixsolutionstest.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +27,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @BindView(R.id.completed_purchases)
     LinearLayout completed;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +36,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         purchases.setOnClickListener(this);
         completed.setOnClickListener(this);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         setupFragments();
     }

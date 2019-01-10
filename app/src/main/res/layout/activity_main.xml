@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,15 +9,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:background="@color/colorAccent"
             android:id="@+id/purchases"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@color/colorAccent"
             android:orientation="vertical">
 
             <ImageView
@@ -26,27 +25,27 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                app:srcCompat="@drawable/ic_purchases"
-                android:contentDescription="@drawable/ic_purchases" />
+                android:contentDescription="@drawable/ic_purchases"
+                app:srcCompat="@drawable/ic_purchases" />
 
-           <TextView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:text="@string/purchases"
-               android:textSize="18sp"
-               android:layout_marginTop="2dp"
-               android:layout_marginBottom="2dp"
-               android:layout_gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:text="@string/purchases"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
 
         <LinearLayout
-            android:background="@color/colorPrimary"
             android:id="@+id/completed_purchases"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@color/colorPrimary"
             android:orientation="vertical">
 
             <ImageView
@@ -54,17 +53,17 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                app:srcCompat="@drawable/ic_completed_purchases"
-                android:contentDescription="@drawable/ic_completed_purchases" />
+                android:contentDescription="@drawable/ic_completed_purchases"
+                app:srcCompat="@drawable/ic_completed_purchases" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/completed_purchases"
-                android:textSize="18sp"
+                android:layout_gravity="center"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
-                android:layout_gravity="center"/>
+                android:text="@string/completed_purchases"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
@@ -84,8 +83,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        app:fabSize="normal"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_action_add"/>
+        app:fabSize="normal"
+        android:scaleType="center" />
 
 </android.support.design.widget.CoordinatorLayout>
