@@ -1,10 +1,11 @@
 package com.jay.nixsolutionstest.contract;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+
 public interface NewPurchaseContract {
 
-     interface View{
-
-        void acceptClick();
+    interface View {
 
         void showDescriptionEditTextError();
 
@@ -16,18 +17,25 @@ public interface NewPurchaseContract {
     }
 
 
-     interface Presenter{
+    interface Presenter {
 
-        void onAcceptClickListener(String description, String price);
+        void onAcceptClickListener(Drawable drawable, String description, String price);
 
         void onDestroy();
     }
 
 
-     interface Model{
+    interface Model {
 
-        interface LoadListener{
+        interface LoadListener {
 
+            void onOperationcomplete();
+
+            void onOperationFailure();
         }
+
+        void saveToDataBase();
+
+        void loadFromDataBase();
     }
 }

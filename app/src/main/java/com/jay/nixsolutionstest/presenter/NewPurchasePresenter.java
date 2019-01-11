@@ -1,5 +1,8 @@
 package com.jay.nixsolutionstest.presenter;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+
 import com.jay.nixsolutionstest.contract.NewPurchaseContract;
 
 public class NewPurchasePresenter implements NewPurchaseContract.Presenter {
@@ -14,14 +17,14 @@ public class NewPurchasePresenter implements NewPurchaseContract.Presenter {
 
 
     @Override
-    public void onAcceptClickListener(String description, String price) {
+    public void onAcceptClickListener(Drawable drawable, String description, String price) {
 
         if (view != null){
 
-            if (description == null){
+            if (description.isEmpty()){
                 view.showDescriptionEditTextError();
 
-            } else if (price == null){
+            } else if (price.isEmpty()){
                 view.showPriceEditTextError();
 
             } else {

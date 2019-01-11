@@ -35,7 +35,7 @@ public class CompletedPurchasesFragment extends Fragment {
     LinearLayout completedPurchasesTab;
 
     //MainActivity's view
-    @BindView(R.id.main_fab)
+    @BindView(R.id.fab_add_new_purchase)
     FloatingActionButton deleteBtn;
 
     @BindDrawable(R.drawable.ic_action_delete)

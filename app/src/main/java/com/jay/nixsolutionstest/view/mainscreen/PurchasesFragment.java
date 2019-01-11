@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.jay.nixsolutionstest.R;
-import com.jay.nixsolutionstest.view.NewPurchaseActivity;
+import com.jay.nixsolutionstest.view.newpurchase.NewPurchaseActivity;
 
 import butterknife.BindColor;
 import butterknife.BindDrawable;
@@ -38,7 +38,7 @@ public class PurchasesFragment extends Fragment {
     LinearLayout purchasesTab;
 
     //MainActivity's view
-    @BindView(R.id.main_fab)
+    @BindView(R.id.fab_add_new_purchase)
     FloatingActionButton actionBtn;
 
     @BindColor(R.color.colorAccent)
@@ -76,7 +76,6 @@ public class PurchasesFragment extends Fragment {
 
         unbinder = ButterKnife.bind(this, activity);
 
-
         purchasesTab.setBackgroundColor(colorAccent);
         actionBtn.setImageDrawable(iconAdd);
     }
@@ -98,25 +97,10 @@ public class PurchasesFragment extends Fragment {
     }
 
 
-    @OnClick(R.id.main_fab)
-    void onClick(View view){
+    @OnClick(R.id.fab_add_new_purchase)
+    public void onAddNewPurchaseClick(){
 
-        switch (view.getId()){
-
-            case R.id.main_fab:
-               activity.startActivityForResult(new Intent(activity, NewPurchaseActivity.class),
-                       1);
-                break;
-        }
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 1){
-
-        }
+        startActivity(new Intent(activity, NewPurchaseActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 }

@@ -7,19 +7,19 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient_list"
     android:orientation="vertical"
-    tools:context=".view.NewPurchaseActivity">
+    tools:context=".view.newpurchase.NewPurchaseActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/image"
+        android:id="@+id/load_image"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_above="@id/description"
         android:layout_centerHorizontal="true"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_action_add_white"
-        app:civ_border_color="@color/colorAccent"
-        app:civ_border_width="1dp"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat"
+        app:civ_border_color="@color/colorWhite"
+        app:civ_border_width="1dp"/>
 
     <EditText
         android:id="@+id/description"
