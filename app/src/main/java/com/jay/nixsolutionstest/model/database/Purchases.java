@@ -2,20 +2,20 @@ package com.jay.nixsolutionstest.model.database;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.graphics.drawable.Drawable;
 
-import io.reactivex.annotations.NonNull;
+import java.util.Arrays;
 
 @Entity(tableName = "purchases")
 public class Purchases {
 
-    @ColumnInfo(name = "image")
-    private Drawable image;
 
-    @NonNull
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    private int key;
+
+    @ColumnInfo(name = "image")
+    private byte[] image;
+
     @ColumnInfo(name = "description")
     private String description;
 
@@ -23,23 +23,26 @@ public class Purchases {
     private String price;
 
 
-    public Purchases() {
-    }
-
-
-    @Ignore
-    public Purchases(Drawable image, String description, String price) {
+    Purchases(byte[] image, String description, String price) {
         this.image = image;
         this.description = description;
         this.price = price;
     }
 
 
-    public Drawable getImage() {
+    public int getKey() {
+        return key;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
+    }
+
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(Drawable image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 
@@ -59,11 +62,10 @@ public class Purchases {
         this.price = price;
     }
 
-
     @Override
     public String toString() {
         return "Purchases{" +
-                "image=" + image +
+                "image=" + Arrays.toString(image) +
                 ", description='" + description + '\'' +
                 ", price='" + price + '\'' +
                 '}';

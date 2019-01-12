@@ -1,4 +1,4 @@
-package com.jay.nixsolutionstest.view.newpurchase;
+package com.jay.nixsolutionstest.view.newpurchasescreen;
 
 import android.app.Activity;
 import android.content.Context;
@@ -110,7 +110,6 @@ public class SelectImageDialogFragment extends DialogFragment {
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     imageView.setImageBitmap(imageBitmap);
                 }
-                dismiss();
                 break;
 
             case ACTION_GALLERY:
@@ -119,8 +118,8 @@ public class SelectImageDialogFragment extends DialogFragment {
                     Uri selectedImage = data.getData();
                     imageView.setImageURI(selectedImage);
                 }
-                dismiss();
                 break;
         }
+        dismiss();
     }
 }

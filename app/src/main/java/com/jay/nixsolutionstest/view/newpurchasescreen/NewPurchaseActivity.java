@@ -1,18 +1,15 @@
-package com.jay.nixsolutionstest.view.newpurchase;
+package com.jay.nixsolutionstest.view.newpurchasescreen;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -25,7 +22,6 @@ import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NewPurchaseActivity extends AppCompatActivity implements NewPurchaseContract.View {
 
@@ -34,7 +30,7 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
 
     @BindView(R.id.parent_layout) RelativeLayout parentLayout;
 
-    @BindView(R.id.load_image) CircleImageView imageView;
+    @BindView(R.id.load_image) ImageView imageView;
 
     @BindView(R.id.description) EditText descriptionEditText;
 
@@ -98,7 +94,7 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
 
         Drawable drawable = imageView.getDrawable();
 
-        presenter.onAcceptClickListener(drawable, description, price);
+        presenter.onAcceptClickListener(this, drawable, description, price);
     }
 
 

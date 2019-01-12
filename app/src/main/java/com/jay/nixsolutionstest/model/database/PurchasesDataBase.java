@@ -10,7 +10,7 @@ import static com.jay.nixsolutionstest.model.database.PurchasesDataBase.DATA_BAS
 @Database(entities = Purchases.class, version = DATA_BASE_VERSION)
 public abstract class PurchasesDataBase extends RoomDatabase {
 
-    public static final int DATA_BASE_VERSION = 1;
+    public static final int DATA_BASE_VERSION = 2;
     public static final String DATA_BASE_NAME = "purchases_db";
 
     public abstract PurchasesDAO purchasesDAO();

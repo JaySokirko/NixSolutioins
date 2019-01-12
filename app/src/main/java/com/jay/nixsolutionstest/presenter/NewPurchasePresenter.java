@@ -1,14 +1,16 @@
 package com.jay.nixsolutionstest.presenter;
 
-import android.graphics.Bitmap;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import com.jay.nixsolutionstest.contract.NewPurchaseContract;
+import com.jay.nixsolutionstest.model.database.DataBaseTransaction;
 
-public class NewPurchasePresenter implements NewPurchaseContract.Presenter {
+public class NewPurchasePresenter implements NewPurchaseContract.Presenter,
+        NewPurchaseContract.Model.InsertIntoDataBaseListener {
 
     private NewPurchaseContract.View view;
-    private NewPurchaseContract.Model model;
+    private NewPurchaseContract.Model model = new DataBaseTransaction();
 
 
     public NewPurchasePresenter(NewPurchaseContract.View view) {
@@ -17,7 +19,8 @@ public class NewPurchasePresenter implements NewPurchaseContract.Presenter {
 
 
     @Override
-    public void onAcceptClickListener(Drawable drawable, String description, String price) {
+    public void onAcceptClickListener(Context context, Drawable drawable, String description,
+                                      String price) {
 
         if (view != null){
 
@@ -28,10 +31,27 @@ public class NewPurchasePresenter implements NewPurchaseContract.Presenter {
                 view.showPriceEditTextError();
 
             } else {
-                //todo add to database
+
                 view.showProgress();
+                model.insertToDataBase(context, this, drawable, description, price);
             }
         }
+    }
+
+
+    @Override
+    public void onInsertCompleted(boolean isCompleted) {
+
+        if (view != null){
+
+            view.hideProgress();
+        }
+    }
+
+
+    @Override
+    public void onInsertFailure(Throwable throwable) {
+
     }
 
 

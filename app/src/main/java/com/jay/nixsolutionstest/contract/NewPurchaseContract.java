@@ -1,6 +1,6 @@
 package com.jay.nixsolutionstest.contract;
 
-import android.graphics.Bitmap;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 public interface NewPurchaseContract {
@@ -19,7 +19,7 @@ public interface NewPurchaseContract {
 
     interface Presenter {
 
-        void onAcceptClickListener(Drawable drawable, String description, String price);
+        void onAcceptClickListener(Context context, Drawable drawable, String description, String price);
 
         void onDestroy();
     }
@@ -27,15 +27,15 @@ public interface NewPurchaseContract {
 
     interface Model {
 
-        interface LoadListener {
+        interface InsertIntoDataBaseListener {
 
-            void onOperationcomplete();
+            void onInsertCompleted(boolean isCompleted);
 
-            void onOperationFailure();
+            void onInsertFailure(Throwable throwable);
         }
 
-        void saveToDataBase();
+        void insertToDataBase(Context context, InsertIntoDataBaseListener listener, Drawable drawable,
+                              String description, String price);
 
-        void loadFromDataBase();
     }
 }

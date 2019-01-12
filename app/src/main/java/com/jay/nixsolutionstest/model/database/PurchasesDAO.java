@@ -18,7 +18,11 @@ public interface PurchasesDAO {
 
 
     @Insert
-    void inser(Purchases purchases);
+    void insertAll(Purchases ... purchases);
+
+
+    @Insert
+    void insert(Purchases purchases);
 
 
     @Delete
