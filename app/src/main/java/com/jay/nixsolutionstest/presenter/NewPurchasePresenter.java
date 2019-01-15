@@ -7,9 +7,10 @@ import com.jay.nixsolutionstest.contract.NewPurchaseContract;
 import com.jay.nixsolutionstest.model.database.DataBaseTransaction;
 
 public class NewPurchasePresenter implements NewPurchaseContract.Presenter,
-        NewPurchaseContract.Model.InsertIntoDataBaseListener {
+        NewPurchaseContract.Model.DataBaseFeedback {
 
     private NewPurchaseContract.View view;
+
     private NewPurchaseContract.Model model = new DataBaseTransaction();
 
 
@@ -20,7 +21,7 @@ public class NewPurchasePresenter implements NewPurchaseContract.Presenter,
 
     @Override
     public void onAcceptClickListener(Context context, Drawable drawable, String description,
-                                      String price) {
+                                      String price, boolean isCompleted) {
 
         if (view != null){
 
@@ -31,20 +32,17 @@ public class NewPurchasePresenter implements NewPurchaseContract.Presenter,
                 view.showPriceEditTextError();
 
             } else {
-
-                view.showProgress();
-                model.insertToDataBase(context, this, drawable, description, price);
+                model.insertToDataBase(context, this, drawable, description, price, isCompleted);
             }
         }
     }
 
 
     @Override
-    public void onInsertCompleted(boolean isCompleted) {
+    public void onInsertCompleted() {
 
         if (view != null){
-
-            view.hideProgress();
+            view.startMainActivity();
         }
     }
 
@@ -52,6 +50,9 @@ public class NewPurchasePresenter implements NewPurchaseContract.Presenter,
     @Override
     public void onInsertFailure(Throwable throwable) {
 
+        if (view != null){
+            view.showSaveItemError(throwable);
+        }
     }
 
 

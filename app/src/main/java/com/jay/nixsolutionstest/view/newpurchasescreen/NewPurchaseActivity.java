@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -87,19 +88,18 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
 
 
     @OnClick(R.id.accept)
-    public void onAcceptClick() {
-
+    public void acceptClick() {
         String description = descriptionEditText.getText().toString();
         String price = priceEditText.getText().toString();
 
         Drawable drawable = imageView.getDrawable();
 
-        presenter.onAcceptClickListener(this, drawable, description, price);
+        presenter.onAcceptClickListener(this, drawable, description, price, false);
     }
 
 
     @OnClick(R.id.cancel)
-    public void onCancelClick(){
+    public void cancelClick() {
 
         startActivity(new Intent(this, MainActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
@@ -107,7 +107,7 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
 
 
     @OnClick(R.id.load_image)
-    public void onImageClick(){
+    public void addImageClick() {
 
         new SelectImageDialogFragment().show(getSupportFragmentManager(), "dialogFragment");
     }
@@ -130,14 +130,17 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
 
 
     @Override
-    public void showProgress() {
+    public void showSaveItemError(Throwable throwable) {
 
+        Snackbar.make(parentLayout, throwable.getMessage(),Snackbar.LENGTH_LONG).show();
     }
 
 
     @Override
-    public void hideProgress() {
+    public void startMainActivity() {
 
+        startActivity(new Intent(this, MainActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
 
@@ -168,5 +171,13 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
             priceErrorTexView.setVisibility(View.INVISIBLE);
             return false;
         });
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        presenter.onDestroy();
     }
 }

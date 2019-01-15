@@ -8,4 +8,6 @@
     <string name="cancel">cancel</string>
     <string name="enter_some_text">enter some text</string>
     <string name="enter_some_price">enter some price</string>
+    <string name="price">price:"  "</string>
+    <string name="select_all">Select all</string>
 </resources>

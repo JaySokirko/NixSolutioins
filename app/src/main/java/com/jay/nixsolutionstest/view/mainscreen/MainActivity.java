@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FragmentManager fragmentManager;
     private FragmentTransaction transaction;
 
-    private PurchasesFragment purchasesFragment;
+    private CurrentPurchasesFragment currentPurchasesFragment;
     private CompletedPurchasesFragment completedPurchasesFragment;
 
     @BindView(R.id.purchases)
@@ -50,11 +50,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setupFragments(){
 
         fragmentManager = getSupportFragmentManager();
-        purchasesFragment = new PurchasesFragment();
+        currentPurchasesFragment = new CurrentPurchasesFragment();
         completedPurchasesFragment = new CompletedPurchasesFragment();
 
         transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.main_container, purchasesFragment);
+        transaction.replace(R.id.main_container, currentPurchasesFragment);
         transaction.commit();
     }
 
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
 
             case R.id.purchases:
-                transaction.replace(R.id.main_container, purchasesFragment);
+                transaction.replace(R.id.main_container, currentPurchasesFragment);
                 break;
 
             case R.id.completed_purchases:

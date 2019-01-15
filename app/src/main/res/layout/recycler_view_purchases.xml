@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
     android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -17,43 +16,40 @@
             android:id="@+id/purchases_image"
             android:layout_width="150dp"
             android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_marginBottom="8dp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:background="@color/colorPrimaryDark"/>
+            android:background="@color/colorPrimaryDark" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <android.support.v4.widget.NestedScrollView
+            <TextView
+                android:id="@+id/purchases_description"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="120dp">
-
-                <TextView
-                    android:id="@+id/purchases_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:textSize="16sp" />
-
-            </android.support.v4.widget.NestedScrollView>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="50dp"
+                android:textSize="16sp" />
 
             <CheckBox
                 android:id="@+id/purchases_checkbox"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="end"/>
 
         </LinearLayout>
 
@@ -62,8 +58,8 @@
             android:id="@+id/purchases_price"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:textSize="14sp"/>
+            android:layout_margin="16sp"
+            android:textSize="16sp" />
 
     </LinearLayout>
 

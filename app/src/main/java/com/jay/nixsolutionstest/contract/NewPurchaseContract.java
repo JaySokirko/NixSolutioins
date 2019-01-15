@@ -11,15 +11,16 @@ public interface NewPurchaseContract {
 
         void showPriceEditTextError();
 
-        void showProgress();
+        void showSaveItemError(Throwable throwable);
 
-        void hideProgress();
+        void startMainActivity();
     }
 
 
     interface Presenter {
 
-        void onAcceptClickListener(Context context, Drawable drawable, String description, String price);
+        void onAcceptClickListener(Context context, Drawable drawable, String description,
+                                   String price, boolean isCompleted);
 
         void onDestroy();
     }
@@ -27,15 +28,15 @@ public interface NewPurchaseContract {
 
     interface Model {
 
-        interface InsertIntoDataBaseListener {
+        interface DataBaseFeedback {
 
-            void onInsertCompleted(boolean isCompleted);
+            void onInsertCompleted();
 
             void onInsertFailure(Throwable throwable);
         }
 
-        void insertToDataBase(Context context, InsertIntoDataBaseListener listener, Drawable drawable,
-                              String description, String price);
+        void insertToDataBase(Context context, DataBaseFeedback feedback, Drawable drawable,
+                              String description, String price, boolean isCompleted);
 
     }
 }

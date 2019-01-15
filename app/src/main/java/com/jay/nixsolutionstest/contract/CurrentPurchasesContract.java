@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 
 import java.util.List;
 
-public interface PurchaseContract {
+public interface CurrentPurchasesContract {
 
 
     interface View {
@@ -14,12 +14,8 @@ public interface PurchaseContract {
 
         void hideProgress();
 
-        void addNewPurchaseClick();
-
-        void deleteSelectedItems();
-
         void onLoadDataCompleted(List<Drawable> drawable, List<String> description,
-                                 List<String> price);
+                                 List<String> price, List<Boolean> isCompleted);
     }
 
 
@@ -27,20 +23,23 @@ public interface PurchaseContract {
 
         void loadData(Context context);
 
+        void updateData(Context context, String key);
+
         void onDestroy();
     }
 
 
     interface Model {
 
-        interface GetFromDataBaseListener {
+        interface GetCompletedFeedback {
 
             void onGetCompleted(List<Drawable> drawable, List<String> description,
-                                List<String> price);
-
-            void onGetFailure(Throwable throwable);
+                                List<String> price, List<Boolean> isCompleted);
         }
 
-        void getFromDataBase(Context context, GetFromDataBaseListener listener);
+
+        void getFromDataBase(Context context, GetCompletedFeedback feedback);
+
+        void updateDataInDataBase(Context context, String key);
     }
 }

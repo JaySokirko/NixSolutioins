@@ -11,7 +11,8 @@ public class Purchases {
 
 
     @PrimaryKey(autoGenerate = true)
-    private int key;
+    @ColumnInfo(name = "id")
+    private int id;
 
     @ColumnInfo(name = "image")
     private byte[] image;
@@ -22,20 +23,24 @@ public class Purchases {
     @ColumnInfo(name = "price")
     private String price;
 
+    @ColumnInfo(name = "isCompleted")
+    private boolean isCompleted;
 
-    Purchases(byte[] image, String description, String price) {
+
+    public Purchases(byte[] image, String description, String price, boolean isCompleted) {
         this.image = image;
         this.description = description;
         this.price = price;
+        this.isCompleted = isCompleted;
     }
 
 
-    public int getKey() {
-        return key;
+    public int getId() {
+        return id;
     }
 
-    public void setKey(int key) {
-        this.key = key;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public byte[] getImage() {
@@ -60,6 +65,14 @@ public class Purchases {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.isCompleted = completed;
     }
 
     @Override
