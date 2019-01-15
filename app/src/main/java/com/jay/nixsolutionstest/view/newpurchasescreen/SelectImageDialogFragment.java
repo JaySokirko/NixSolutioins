@@ -58,9 +58,11 @@ public class SelectImageDialogFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_dialog_select_image, null);
+        View view = inflater.inflate(R.layout.fragment_dialog_select_image, container);
 
         ButterKnife.bind(this, view);
+
+        getDialog().setTitle(getResources().getString(R.string.upload_new_image));
 
         return view;
     }
@@ -105,7 +107,7 @@ public class SelectImageDialogFragment extends DialogFragment {
 
             case ACTION_CAMERA:
 
-                if (data.getExtras() != null) {
+                if (data != null && data.getExtras() != null) {
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     imageView.setImageBitmap(imageBitmap);

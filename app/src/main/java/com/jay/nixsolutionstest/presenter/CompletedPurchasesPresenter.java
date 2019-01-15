@@ -9,6 +9,8 @@ import com.jay.nixsolutionstest.model.database.DataBaseTransaction;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class CompletedPurchasesPresenter implements CompletedPurchasesContract.Presenter,
         CompletedPurchasesContract.Model.DataBaseFeedback, CurrentPurchasesContract.Model.GetCompletedFeedback {
 
@@ -18,7 +20,7 @@ public class CompletedPurchasesPresenter implements CompletedPurchasesContract.P
 
     private CurrentPurchasesContract.Model currentPurchaseModel = new DataBaseTransaction();
 
-
+    @Inject
     public CompletedPurchasesPresenter(CompletedPurchasesContract.View view) {
         this.view = view;
     }
@@ -79,7 +81,7 @@ public class CompletedPurchasesPresenter implements CompletedPurchasesContract.P
         if (view != null){
 
             view.hideProgress();
-            view.onLoadDataCompleted(drawable, description, price, isCompleted);
+            view.onLoadDataCompleted(drawable, description, price);
 
             drawable.clear();
             description.clear();

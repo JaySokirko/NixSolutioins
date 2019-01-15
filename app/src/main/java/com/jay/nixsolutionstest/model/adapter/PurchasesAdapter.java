@@ -153,14 +153,13 @@ public class PurchasesAdapter extends RecyclerView.Adapter<PurchasesAdapter.View
             }
         }
 
-        //Get all selected positions
-        for (int i = 0; i < itemStateArray.size(); i++) {
+        for (int i = 0; i < getItemCount(); i++){
 
-            if (itemStateArray.valueAt(i)) {
-
+            if (itemStateArray.valueAt(i)){
                 selectedPositions.add(i);
             }
         }
+
         callback.onItemClick(selectedPositions, isEnyItemSelected);
     }
 
@@ -180,6 +179,12 @@ public class PurchasesAdapter extends RecyclerView.Adapter<PurchasesAdapter.View
         notifyDataSetChanged();
 
         isAllItemsSelected = !isAllItemsSelected;
+    }
+
+
+    public void disableItemCheckedAtPosition(int position){
+
+        itemStateArray.put(position, false);
     }
 
 

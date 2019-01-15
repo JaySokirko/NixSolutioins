@@ -1,10 +1,17 @@
 package com.jay.nixsolutionstest.view.newpurchasescreen;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,11 +20,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jay.nixsolutionstest.R;
 import com.jay.nixsolutionstest.contract.NewPurchaseContract;
+import com.jay.nixsolutionstest.di.DaggerAppComponent;
+import com.jay.nixsolutionstest.di.PresenterModule;
 import com.jay.nixsolutionstest.presenter.NewPurchasePresenter;
+import com.jay.nixsolutionstest.utils.Permissions;
 import com.jay.nixsolutionstest.view.mainscreen.MainActivity;
+
+import javax.inject.Inject;
 
 import butterknife.BindDrawable;
 import butterknife.BindView;
@@ -26,30 +39,46 @@ import butterknife.OnClick;
 
 public class NewPurchaseActivity extends AppCompatActivity implements NewPurchaseContract.View {
 
-    private static final String TAG = "LOG_TAG";
+
+    @BindView(R.id.parent_layout)
+    RelativeLayout parentLayout;
+
+    @BindView(R.id.load_image)
+    ImageView imageView;
+
+    @BindView(R.id.description)
+    EditText descriptionEditText;
+
+    @BindView(R.id.price)
+    EditText priceEditText;
+
+    @BindView(R.id.cancel)
+    Button cancelBtn;
+
+    @BindView(R.id.accept)
+    Button acceptBtn;
+
+    @BindView(R.id.description_edit_error)
+    TextView descriptionErrorTextView;
+
+    @BindView(R.id.price_edit_error)
+    TextView priceErrorTexView;
+
+    @BindDrawable(R.drawable.shape_bottom_left_corner_90_error)
+    Drawable errorBackground;
+
+    @BindDrawable(R.drawable.shape_bottom_left_corner_0)
+    Drawable normalBackground;
+
+    @Inject
+    public NewPurchasePresenter presenter;
+
+    @Inject
+    public Permissions permissions;
+
     private AnimationDrawable backgroundAnimation;
 
-    @BindView(R.id.parent_layout) RelativeLayout parentLayout;
-
-    @BindView(R.id.load_image) ImageView imageView;
-
-    @BindView(R.id.description) EditText descriptionEditText;
-
-    @BindView(R.id.price) EditText priceEditText;
-
-    @BindView(R.id.cancel) Button cancelBtn;
-
-    @BindView(R.id.accept) Button acceptBtn;
-
-    @BindView(R.id.description_edit_error) TextView descriptionErrorTextView;
-
-    @BindView(R.id.price_edit_error) TextView priceErrorTexView;
-
-    @BindDrawable(R.drawable.shape_bottom_left_corner_90_error) Drawable errorBackground;
-
-    @BindDrawable(R.drawable.shape_bottom_left_corner_0) Drawable normalBackground;
-
-    private NewPurchasePresenter presenter;
+    private static final int PERMISSION_REQUEST_CODE = 123;
 
 
     @Override
@@ -58,6 +87,9 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
         setContentView(R.layout.activity_new_purchase);
 
         ButterKnife.bind(this);
+
+        DaggerAppComponent.builder().presenterModule(new PresenterModule(this))
+                .build().inject(this);
 
         backgroundAnimation = (AnimationDrawable) parentLayout.getBackground();
         backgroundAnimation.setExitFadeDuration(2800);
@@ -94,7 +126,16 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
 
         Drawable drawable = imageView.getDrawable();
 
-        presenter.onAcceptClickListener(this, drawable, description, price, false);
+        boolean isDrawableCorrect = drawable instanceof BitmapDrawable;
+
+        if (isDrawableCorrect) {
+
+            presenter.onAcceptClickListener(this, drawable, description, price, false);
+
+        } else {
+            drawable = getResources().getDrawable(R.drawable.ic_purchase_standart);
+            presenter.onAcceptClickListener(this, drawable, description, price, false);
+        }
     }
 
 
@@ -109,7 +150,14 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
     @OnClick(R.id.load_image)
     public void addImageClick() {
 
-        new SelectImageDialogFragment().show(getSupportFragmentManager(), "dialogFragment");
+        if (permissions.hasPermissions(this)) {
+            //The application has permissions.
+            new SelectImageDialogFragment().show(getSupportFragmentManager(), "dialogFragment");
+        } else {
+            //The application does not have permission.
+            //Request permissions from a user.
+           permissions.requestPermissionWithRationale(this, parentLayout);
+        }
     }
 
 
@@ -132,7 +180,7 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
     @Override
     public void showSaveItemError(Throwable throwable) {
 
-        Snackbar.make(parentLayout, throwable.getMessage(),Snackbar.LENGTH_LONG).show();
+        Snackbar.make(parentLayout, throwable.getMessage(), Snackbar.LENGTH_LONG).show();
     }
 
 
@@ -148,7 +196,7 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
      * Hide the error when the user starts typing a description.
      */
     @SuppressLint("ClickableViewAccessibility")
-    private void onDescriptionEditTextTouchListener(){
+    private void onDescriptionEditTextTouchListener() {
 
         descriptionEditText.setOnTouchListener((view, motionEvent) -> {
 
@@ -163,7 +211,7 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
      * Hide the error when the user starts typing a price.
      */
     @SuppressLint("ClickableViewAccessibility")
-    private void onPriceEditTextTouchListener(){
+    private void onPriceEditTextTouchListener() {
 
         priceEditText.setOnTouchListener((view, motionEvent) -> {
 
@@ -175,9 +223,48 @@ public class NewPurchaseActivity extends AppCompatActivity implements NewPurchas
 
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[]
+            permissionsArray, @NonNull int[] grantResults) {
+
+        boolean allowed = true;
+
+        switch (requestCode){
+
+            case PERMISSION_REQUEST_CODE:
+
+                for (int res : grantResults){
+                    //If the user has granted permissions.
+                    allowed = allowed && (res == PackageManager.PERMISSION_GRANTED);
+                }
+                break;
+            default:
+                //If the user has not granted permissions.
+                allowed = false;
+                break;
+        }
+        if (allowed){
+            //The user has granted all permissions.
+            new SelectImageDialogFragment().show(getSupportFragmentManager(), "dialogFragment");
+        }
+        else {
+            //Will give a warning to the user that he has not granted permission.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                    Toast.makeText(this,
+                            getResources().getString(R.string.storage_permissions_denied), Toast.LENGTH_SHORT).show();
+                } else {
+                    permissions.showNoStoragePermissionSnackBar(this, parentLayout);
+                }
+            }
+        }
+    }
+
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
         presenter.onDestroy();
     }
+
 }

@@ -2,12 +2,13 @@ package com.jay.nixsolutionstest.presenter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.jay.nixsolutionstest.contract.CurrentPurchasesContract;
 import com.jay.nixsolutionstest.model.database.DataBaseTransaction;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 public class CurrentPurchasePresenter implements CurrentPurchasesContract.Presenter,
         CurrentPurchasesContract.Model.GetCompletedFeedback {
@@ -16,9 +17,9 @@ public class CurrentPurchasePresenter implements CurrentPurchasesContract.Presen
     private CurrentPurchasesContract.View view;
 
     private CurrentPurchasesContract.Model model = new DataBaseTransaction();
-   
 
 
+    @Inject
     public CurrentPurchasePresenter(CurrentPurchasesContract.View view) {
         this.view = view;
     }
@@ -47,18 +48,30 @@ public class CurrentPurchasePresenter implements CurrentPurchasesContract.Presen
 
 
     @Override
-    public void onGetCompleted(List<Drawable> drawable, List<String> description, List<String> price,
-                               List<Boolean> isCompleted) {
+    public void onGetCompleted(List<Drawable> drawableList, List<String> descriptionList,
+                               List<String> priceList, List<Boolean> isCompletedList) {
 
         if (view != null){
 
-            view.onLoadDataCompleted(drawable, description, price, isCompleted);
+
+            for (int i = isCompletedList.size() - 1; i >= 0; i--){
+
+                if (isCompletedList.get(i)){
+
+                    drawableList.remove(i);
+                    descriptionList.remove(i);
+                    priceList.remove(i);
+                    isCompletedList.remove(i);
+                }
+            }
+
+            view.onLoadDataCompleted(drawableList, descriptionList, priceList);
             view.hideProgress();
 
-            drawable.clear();
-            description.clear();
-            price.clear();
-            isCompleted.clear();
+            drawableList.clear();
+            descriptionList.clear();
+            priceList.clear();
+            isCompletedList.clear();
         }
     }
 

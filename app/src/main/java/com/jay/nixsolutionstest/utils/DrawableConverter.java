@@ -1,5 +1,6 @@
 package com.jay.nixsolutionstest.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -10,9 +11,9 @@ import java.io.IOException;
 
 public class DrawableConverter {
 
-    public static byte[] convertDrawableToByteArray(Drawable drawable){
+    public static byte[] convertDrawableToByteArray(Drawable drawable) {
 
-        Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         try {
@@ -24,13 +25,13 @@ public class DrawableConverter {
     }
 
 
-    public static Drawable convertByteArrayToDrawable(byte[] bytes){
+    public static Drawable convertByteArrayToDrawable(Context contexts, byte[] bytes) {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 4;
+        options.inSampleSize = 3;
 
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
 
-        return new BitmapDrawable(bitmap);
+        return new BitmapDrawable(contexts.getResources(), bitmap);
     }
 }

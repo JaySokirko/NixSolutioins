@@ -14,8 +14,7 @@ public interface CurrentPurchasesContract {
 
         void hideProgress();
 
-        void onLoadDataCompleted(List<Drawable> drawable, List<String> description,
-                                 List<String> price, List<Boolean> isCompleted);
+        void onLoadDataCompleted(List<Drawable> drawable, List<String> description, List<String> price);
     }
 
 

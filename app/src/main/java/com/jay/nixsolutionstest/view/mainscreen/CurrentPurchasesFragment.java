@@ -1,7 +1,6 @@
 package com.jay.nixsolutionstest.view.mainscreen;
 
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +13,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +22,16 @@ import android.widget.ProgressBar;
 
 import com.jay.nixsolutionstest.R;
 import com.jay.nixsolutionstest.contract.CurrentPurchasesContract;
+import com.jay.nixsolutionstest.di.DaggerAppComponent;
+import com.jay.nixsolutionstest.di.PresenterModule;
 import com.jay.nixsolutionstest.model.adapter.PurchasesAdapter;
 import com.jay.nixsolutionstest.presenter.CurrentPurchasePresenter;
 import com.jay.nixsolutionstest.view.newpurchasescreen.NewPurchaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindColor;
 import butterknife.BindDrawable;
@@ -45,7 +47,6 @@ import butterknife.Unbinder;
 public class CurrentPurchasesFragment extends Fragment implements CurrentPurchasesContract.View,
         PurchasesAdapter.OnItemClickListener {
 
-    private static final String TAG = "FRAGMENT_LOG";
     private Activity activity;
 
     private Unbinder unbinder;
@@ -80,15 +81,14 @@ public class CurrentPurchasesFragment extends Fragment implements CurrentPurchas
     @BindDrawable(R.drawable.ic_action_purchased)
     Drawable iconPurchased;
 
-    private RecyclerView purchasesRecyclerView;
+    @Inject
+    public CurrentPurchasePresenter presenter;
 
     private PurchasesAdapter purchasesAdapter;
 
     private List<Drawable> drawableList = new ArrayList<>();
     private List<String> descriptionList = new ArrayList<>();
     private List<String> priceList = new ArrayList<>();
-
-    private CurrentPurchasePresenter presenter;
 
     private boolean isEnyItemSelected;
     private boolean isAllItemsSelected;
@@ -113,16 +113,18 @@ public class CurrentPurchasesFragment extends Fragment implements CurrentPurchas
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_purshases, container, false);
 
+        DaggerAppComponent.builder().presenterModule(new PresenterModule(this))
+                .build().inject(this);
+
         progressBar = view.findViewById(R.id.load_from_db_progress_bar);
 
-        purchasesRecyclerView = view.findViewById(R.id.purchases_recycler_view);
+        RecyclerView purchasesRecyclerView = view.findViewById(R.id.purchases_recycler_view);
         purchasesRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
 
         purchasesAdapter = new PurchasesAdapter(activity, drawableList, descriptionList,
                 priceList, this);
         purchasesRecyclerView.setAdapter(purchasesAdapter);
 
-        presenter = new CurrentPurchasePresenter(this);
         presenter.loadData(activity);
 
         return view;
@@ -138,8 +140,9 @@ public class CurrentPurchasesFragment extends Fragment implements CurrentPurchas
         purchasesTab.setBackgroundColor(colorAccent);
         actionBtn.setImageDrawable(iconAdd);
 
-        selectAllLayout.setVisibility(View.INVISIBLE);
-        selectAllLayout.animate().translationX(1000).start();
+        hideSelectAllCheckBox();
+
+        selectAllCheckBox.setChecked(false);
     }
 
 
@@ -166,6 +169,8 @@ public class CurrentPurchasesFragment extends Fragment implements CurrentPurchas
                 for (int i = 0; i < descriptionList.size(); i++) {
 
                     presenter.updateData(activity, descriptionList.get(i));
+                    isEnyItemSelected = false;
+                    actionBtn.setImageDrawable(iconAdd);
                 }
             } else {
 
@@ -173,10 +178,13 @@ public class CurrentPurchasesFragment extends Fragment implements CurrentPurchas
                 for (int selectedPosition : selectedPositions) {
 
                     presenter.updateData(activity, descriptionList.get(selectedPosition));
+
+                    isEnyItemSelected = false;
+                    actionBtn.setImageDrawable(iconAdd);
+                    purchasesAdapter.disableItemCheckedAtPosition(selectedPosition);
                 }
             }
-            selectAllLayout.animate().translationX(1000).setDuration(500).start();
-            new Handler().postDelayed(() -> selectAllLayout.setVisibility(View.INVISIBLE), 500);
+           hideSelectAllCheckBox();
         }
     }
 
@@ -205,26 +213,16 @@ public class CurrentPurchasesFragment extends Fragment implements CurrentPurchas
 
 
     @Override
-    public void onLoadDataCompleted(List<Drawable> drawables, List<String> descriptions,
-                                    List<String> prices, List<Boolean> isCompletedList) {
+    public void onLoadDataCompleted(List<Drawable> drawables, List<String> descriptions, List<String> prices) {
 
         drawableList.clear();
         descriptionList.clear();
         priceList.clear();
 
-        boolean isPurchaseAlreadyDone;
+        drawableList.addAll(drawables);
+        descriptionList.addAll(descriptions);
+        priceList.addAll(prices);
 
-        for (int i = 0; i < isCompletedList.size(); i++) {
-
-            isPurchaseAlreadyDone = isCompletedList.get(i);
-
-            if (!isPurchaseAlreadyDone) {
-
-                drawableList.add(drawables.get(i));
-                descriptionList.add(descriptions.get(i));
-                priceList.add(prices.get(i));
-            }
-        }
         purchasesAdapter.notifyDataSetChanged();
     }
 
@@ -241,16 +239,27 @@ public class CurrentPurchasesFragment extends Fragment implements CurrentPurchas
 
             actionBtn.setImageDrawable(iconPurchased);
 
-            selectAllLayout.setVisibility(View.VISIBLE);
-            selectAllLayout.animate().translationX(0).setDuration(500).start();
-
+            showSelectAllCheckBox();
         } else {
 
             actionBtn.setImageDrawable(iconAdd);
 
-            selectAllLayout.animate().translationX(1000).setDuration(500).start();
-            new Handler().postDelayed(() -> selectAllLayout.setVisibility(View.INVISIBLE), 500);
+            hideSelectAllCheckBox();
         }
+    }
+
+
+    private void showSelectAllCheckBox(){
+
+        selectAllLayout.setVisibility(View.VISIBLE);
+        selectAllLayout.animate().translationX(0).setDuration(500).start();
+    }
+
+
+    private void hideSelectAllCheckBox(){
+
+        selectAllLayout.animate().translationX(1000).setDuration(500).start();
+        new Handler().postDelayed(() -> selectAllLayout.setVisibility(View.INVISIBLE), 500);
     }
 
 

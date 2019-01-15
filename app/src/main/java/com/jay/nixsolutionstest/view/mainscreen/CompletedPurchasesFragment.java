@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,16 +16,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.jay.nixsolutionstest.R;
 import com.jay.nixsolutionstest.contract.CompletedPurchasesContract;
+import com.jay.nixsolutionstest.di.DaggerAppComponent;
+import com.jay.nixsolutionstest.di.PresenterModule;
 import com.jay.nixsolutionstest.model.adapter.PurchasesAdapter;
 import com.jay.nixsolutionstest.presenter.CompletedPurchasesPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindColor;
 import butterknife.BindDrawable;
@@ -31,6 +38,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,6 +59,14 @@ public class CompletedPurchasesFragment extends Fragment implements CompletedPur
     @BindView(R.id.fab_action)
     FloatingActionButton deleteBtn;
 
+    //MainActivity's view
+    @BindView(R.id.select_all_layout)
+    LinearLayout selectAllLayout;
+
+    //MainActivity's view
+    @BindView(R.id.select_all_check_box)
+    CheckBox selectAllCheckBox;
+
     @BindDrawable(R.drawable.ic_action_delete)
     Drawable iconDelete;
 
@@ -59,9 +76,10 @@ public class CompletedPurchasesFragment extends Fragment implements CompletedPur
     @BindColor(R.color.colorPrimary)
     int colorPrimary;
 
-    private ProgressBar progressBar;
+    @Inject
+    public CompletedPurchasesPresenter presenter;
 
-    private RecyclerView purchasesRecyclerView;
+    private ProgressBar progressBar;
 
     private PurchasesAdapter purchasesAdapter;
 
@@ -69,12 +87,10 @@ public class CompletedPurchasesFragment extends Fragment implements CompletedPur
     private List<String> descriptionList = new ArrayList<>();
     private List<String> priceList = new ArrayList<>();
 
-    private boolean isEnyItemSelected;
+    private boolean isAllItemsSelected;
 
     private ArrayList<Integer> selectedPositions = new ArrayList<>();
 
-    private CompletedPurchasesPresenter presenter;
-    private String TAG = "COMPLETED_TAG";
 
     public CompletedPurchasesFragment() {
         // Required empty public constructor
@@ -89,21 +105,23 @@ public class CompletedPurchasesFragment extends Fragment implements CompletedPur
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_completed_purchases, container, false);
 
+        DaggerAppComponent.builder().presenterModule(new PresenterModule(this))
+                .build().inject(this);
+
         progressBar = view.findViewById(R.id.load_from_db_progress_bar_completed_purchases);
 
-        purchasesRecyclerView = view.findViewById(R.id.completed_purchases_recycler_view);
+        RecyclerView purchasesRecyclerView = view.findViewById(R.id.completed_purchases_recycler_view);
         purchasesRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
 
         purchasesAdapter = new PurchasesAdapter(activity, drawableList, descriptionList,
                 priceList, this);
         purchasesRecyclerView.setAdapter(purchasesAdapter);
 
-        presenter = new CompletedPurchasesPresenter(this);
         presenter.loadData(activity);
 
         return view;
@@ -118,6 +136,8 @@ public class CompletedPurchasesFragment extends Fragment implements CompletedPur
 
         completedPurchasesTab.setBackgroundColor(colorAccent);
         deleteBtn.setImageDrawable(iconDelete);
+
+        selectAllCheckBox.setChecked(false);
     }
 
 
@@ -126,14 +146,6 @@ public class CompletedPurchasesFragment extends Fragment implements CompletedPur
         super.onPause();
 
         completedPurchasesTab.setBackgroundColor(colorPrimary);
-    }
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        unbinder.unbind();
     }
 
 
@@ -153,25 +165,17 @@ public class CompletedPurchasesFragment extends Fragment implements CompletedPur
 
     @Override
     public void onLoadDataCompleted(List<Drawable> drawables, List<String> descriptions,
-                                    List<String> prices, List<Boolean> isCompletedList) {
+                                    List<String> prices) {
 
         drawableList.clear();
         descriptionList.clear();
         priceList.clear();
 
-        boolean isPurchaseAlreadyDone;
 
-        for (int i = 0; i < isCompletedList.size(); i++) {
+        drawableList.addAll(drawables);
+        descriptionList.addAll(descriptions);
+        priceList.addAll(prices);
 
-            isPurchaseAlreadyDone = isCompletedList.get(i);
-
-            if (isPurchaseAlreadyDone) {
-
-                drawableList.add(drawables.get(i));
-                descriptionList.add(descriptions.get(i));
-                priceList.add(prices.get(i));
-            }
-        }
         purchasesAdapter.notifyDataSetChanged();
     }
 
@@ -179,27 +183,73 @@ public class CompletedPurchasesFragment extends Fragment implements CompletedPur
     @OnClick(R.id.fab_action)
     void onDeleteClick() {
 
-        for (int selectedPosition : selectedPositions) {
+        if (isAllItemsSelected) {
 
-            presenter.deleteDataByKey(activity, descriptionList.get(selectedPosition));
+            presenter.deleteAllData(activity);
+
+            hideSelectAllCheckBox();
+
+        } else {
+
+            //delete only selected purchases
+            for (int selectedPosition : selectedPositions) {
+
+                presenter.deleteDataByKey(activity, descriptionList.get(selectedPosition));
+
+                purchasesAdapter.disableItemCheckedAtPosition(selectedPosition);
+
+                hideSelectAllCheckBox();
+            }
         }
     }
 
 
-    @Override
-    public void onItemClick(ArrayList<Integer> position, boolean isSelectedEnyOne) {
+    @OnClick(R.id.select_all_check_box)
+    void onSelectAllClick() {
 
-        this.isEnyItemSelected = isSelectedEnyOne;
+        purchasesAdapter.setAllChecked();
 
-        this.selectedPositions.clear();
-        this.selectedPositions.addAll(position);
+        isAllItemsSelected = !isAllItemsSelected;
     }
 
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onItemClick(ArrayList<Integer> positions, boolean isSelectedEnyOne) {
 
+        this.selectedPositions.clear();
+        this.selectedPositions.addAll(positions);
+
+        isAllItemsSelected = false;
+
+        if (isSelectedEnyOne) {
+
+            showSelectAllCheckBox();
+
+        } else {
+            hideSelectAllCheckBox();
+        }
+    }
+
+
+    private void showSelectAllCheckBox() {
+
+        selectAllLayout.setVisibility(View.VISIBLE);
+        selectAllLayout.animate().translationX(0).setDuration(500).start();
+    }
+
+
+    private void hideSelectAllCheckBox() {
+
+        selectAllLayout.animate().translationX(1000).setDuration(500).start();
+        new Handler().postDelayed(() -> selectAllLayout.setVisibility(View.INVISIBLE), 500);
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        unbinder.unbind();
         presenter.onDestroy();
     }
 }

@@ -3,7 +3,6 @@ package com.jay.nixsolutionstest.model.database;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.jay.nixsolutionstest.contract.CompletedPurchasesContract;
 import com.jay.nixsolutionstest.contract.CurrentPurchasesContract;
@@ -17,13 +16,11 @@ import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 
 public class DataBaseTransaction implements NewPurchaseContract.Model, CurrentPurchasesContract.Model
-        ,CompletedPurchasesContract.Model {
+        , CompletedPurchasesContract.Model {
 
-    private static final String TAG = "DATABASE_LOG";
     private PurchasesDataBase dataBase;
     private Purchases purchases;
 
@@ -78,10 +75,9 @@ public class DataBaseTransaction implements NewPurchaseContract.Model, CurrentPu
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(purchases -> {
 
-
                     for (Purchases p : purchases) {
 
-                        drawableList.add(DrawableConverter.convertByteArrayToDrawable(p.getImage()));
+                        drawableList.add(DrawableConverter.convertByteArrayToDrawable(context,p.getImage()));
 
                         descriptionList.add(p.getDescription());
 
@@ -106,13 +102,16 @@ public class DataBaseTransaction implements NewPurchaseContract.Model, CurrentPu
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CompletableObserver() {
                     @Override
-                    public void onSubscribe(Disposable d) {}
+                    public void onSubscribe(Disposable d) {
+                    }
 
                     @Override
-                    public void onComplete() {}
+                    public void onComplete() {
+                    }
 
                     @Override
-                    public void onError(Throwable e) { }
+                    public void onError(Throwable e) {
+                    }
                 });
     }
 
@@ -130,7 +129,8 @@ public class DataBaseTransaction implements NewPurchaseContract.Model, CurrentPu
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CompletableObserver() {
                     @Override
-                    public void onSubscribe(Disposable d) {}
+                    public void onSubscribe(Disposable d) {
+                    }
 
                     @Override
                     public void onComplete() {
@@ -139,7 +139,8 @@ public class DataBaseTransaction implements NewPurchaseContract.Model, CurrentPu
                     }
 
                     @Override
-                    public void onError(Throwable e) { }
+                    public void onError(Throwable e) {
+                    }
                 });
 
     }
@@ -149,5 +150,26 @@ public class DataBaseTransaction implements NewPurchaseContract.Model, CurrentPu
     public void deleteAllDataFromDataBase(Context context,
                                           CompletedPurchasesContract.Model.DataBaseFeedback feedback) {
 
+        dataBase = PurchasesDataBase.getInstance(context);
+
+        Completable.fromAction(() ->
+                dataBase.purchasesDAO().deleteAll())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                        feedback.onDeleteCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+                });
     }
 }

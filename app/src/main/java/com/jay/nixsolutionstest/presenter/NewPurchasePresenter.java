@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import com.jay.nixsolutionstest.contract.NewPurchaseContract;
 import com.jay.nixsolutionstest.model.database.DataBaseTransaction;
 
+import javax.inject.Inject;
+
 public class NewPurchasePresenter implements NewPurchaseContract.Presenter,
         NewPurchaseContract.Model.DataBaseFeedback {
 
@@ -14,6 +16,7 @@ public class NewPurchasePresenter implements NewPurchaseContract.Presenter,
     private NewPurchaseContract.Model model = new DataBaseTransaction();
 
 
+    @Inject
     public NewPurchasePresenter(NewPurchaseContract.View view) {
         this.view = view;
     }
