@@ -74,13 +74,4 @@ public class Purchases {
     public void setCompleted(boolean completed) {
         this.isCompleted = completed;
     }
-
-    @Override
-    public String toString() {
-        return "Purchases{" +
-                "image=" + Arrays.toString(image) +
-                ", description='" + description + '\'' +
-                ", price='" + price + '\'' +
-                '}';
-    }
 }

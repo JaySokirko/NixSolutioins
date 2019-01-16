@@ -10,15 +10,15 @@ import static com.jay.nixsolutionstest.model.database.PurchasesDataBase.DATA_BAS
 @Database(entities = Purchases.class, version = DATA_BASE_VERSION)
 public abstract class PurchasesDataBase extends RoomDatabase {
 
-    public static final int DATA_BASE_VERSION = 6;
-    public static final String DATA_BASE_NAME = "purchases_db";
+    static final int DATA_BASE_VERSION = 6;
+    private static final String DATA_BASE_NAME = "purchases_db";
 
     public abstract PurchasesDAO purchasesDAO();
 
 
     private static PurchasesDataBase dataBaseInstance;
 
-    public static PurchasesDataBase getInstance(Context context){
+    static PurchasesDataBase getInstance(Context context){
 
         if (dataBaseInstance == null){
 
